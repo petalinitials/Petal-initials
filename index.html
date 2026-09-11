@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Petal Initials Business Tracker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fff8f5;color:#4d4141}header{background:#f4d6df;padding:18px;text-align:center}h1{margin:0;color:#a84f6b}.tabs{display:flex;gap:6px;overflow-x:auto;padding:10px;background:#fff;position:sticky;top:0;z-index:5}.tabs button{border:0;padding:10px 14px;border-radius:20px;background:#f4d6df;color:#7d4054;font-weight:bold;white-space:nowrap}.wrap{max-width:1050px;margin:auto;padding:15px}.card{background:#fff;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 10px #0001}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}label{display:block;font-size:13px;font-weight:bold;margin-bottom:5px}input,select,button,textarea{font:inherit}input,select,textarea{width:100%;padding:10px;border:1px solid #dccfd0;border-radius:9px;background:#fff}button{cursor:pointer}.btn{background:#a84f6b;color:#fff;border:0;border-radius:10px;padding:11px 15px;font-weight:bold;margin-top:10px}.secondary{background:#eadfe0;color:#654e52}.danger{background:#c85d68}.metric{font-size:24px;font-weight:bold;color:#a84f6b}.small{font-size:12px;color:#777}.hidden{display:none!important}table{width:100%;border-collapse:collapse;min-width:650px}th,td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:13px;vertical-align:middle}th{background:#f4d6df;color:#7d4054}.table-wrap{overflow-x:auto}.stocklow{background:#f8d7da}.pill{display:inline-block;background:#f4d6df;border-radius:20px;padding:5px 9px;margin:3px}.success{background:#dceeda;padding:10px;border-radius:10px}.notice{background:#fff2d9;padding:10px;border-radius:10px}.delete{border:0;background:#f8d7da;border-radius:8px;padding:5px 9px}.navactive{outline:2px solid #d7b56d}.total{font-weight:bold}.muted{color:#777}.empty{text-align:center;padding:20px;color:#888}.save-status{font-size:12px;padding:7px 10px;border-radius:10px;text-align:center;margin-top:8px}.save-status.ok{background:#dceeda;color:#456b4b}.save-status.warn{background:#fff2d9;color:#805d1b}
+@media(max-width:600px){.metric{font-size:20px}h2{font-size:20px}}
+</style>
+
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e9a9b8">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Petal Initials">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+</head>
+<body>
+<header><h1>🌸 Petal Initials</h1><div>Business Tracker</div><div id="saveStatus" class="save-status">Checking storage…</div></header>
+<nav class="tabs" id="tabs">
+<button data-page="dashboard">Dashboard</button><button data-page="sales">Sales</button><button data-page="stock">A–Z Stock</button><button data-page="materials">Materials</button><button data-page="expenses">Expenses</button><button data-page="settings">Settings</button><button data-page="backup">Backup</button>
+</nav>
+<main class="wrap">
+<section id="dashboard">
+<div class="card"><h2>Dashboard</h2><div class="grid">
+<div><div class="small">Sales</div><div class="metric" id="revenue">£0.00</div></div>
+<div><div class="small">Keyrings sold</div><div class="metric" id="units">0</div></div>
+<div><div class="small">Product profit</div><div class="metric" id="productProfit">£0.00</div></div>
+<div><div class="small">Expenses</div><div class="metric" id="expenseTotal">£0.00</div></div>
+<div><div class="small">Profit after expenses</div><div class="metric" id="netProfit">£0.00</div></div>
+</div></div>
+<div class="card"><h3>Quick craft-fair sale</h3><div class="grid"><div><label>Letter</label><select id="qletter"></select></div><div><label>Design</label><select id="qdesign"><option>Glitter</option><option>Floral</option></select></div><div><label>Payment</label><select id="qpayment"><option>Cash</option><option>Card</option><option>Apple Pay</option><option>Google Pay</option><option>Other</option></select></div></div><button class="btn" id="quickSaleBtn">+ Record Sale</button></div>
+<div class="card"><h3>Low stock</h3><div id="low"></div></div>
+</section>
+<section id="sales" class="hidden">
+<div class="card"><h2>Record a Sale</h2><div class="grid"><div><label>Date</label><input type="date" id="sdate"></div><div><label>Letter</label><select id="sletter"></select></div><div><label>Design</label><select id="sdesign"><option>Glitter</option><option>Floral</option></select></div><div><label>Payment</label><select id="payment"><option>Cash</option><option>Card</option><option>Apple Pay</option><option>Google Pay</option><option>Etsy</option><option>Folksy</option><option>Website</option><option>Other</option></select></div><div><label>Price</label><input type="number" step="0.01" id="sprice"></div><div><label>Notes</label><input id="snotes" placeholder="Optional"></div></div><button class="btn" id="addSaleBtn">Add Sale</button></div>
+<div class="card"><h3>Sales history</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Letter</th><th>Design</th><th>Payment</th><th>Price</th><th>Cost</th><th>Profit</th><th></th></tr></thead><tbody id="salestable"></tbody></table></div></div>
+</section>
+<section id="stock" class="hidden"><div class="card"><h2>A–Z Stock</h2><p class="small">Set Starting Stock for what you already have. Add to Made whenever you make more. Sold is calculated from Sales.</p><div class="table-wrap"><table><thead><tr><th>Letter</th><th>Starting</th><th>Made</th><th>Sold</th><th>Current</th><th>Alert</th></tr></thead><tbody id="stocktable"></tbody></table></div></div></section>
+<section id="materials" class="hidden"><div class="card"><h2>Materials</h2><p class="small">Edit pack costs/quantities and your current stock. Changes are saved when you press Save.</p><div class="table-wrap"><table><thead><tr><th>Material</th><th>Pack cost</th><th>Pack qty</th><th>Unit</th><th>Cost/unit</th><th>In stock</th><th>Reorder</th></tr></thead><tbody id="mattable"></tbody></table></div><button class="btn" id="saveMaterialsBtn">Save Materials</button></div></section>
+<section id="expenses" class="hidden"><div class="card"><h2>Add Expense</h2><div class="grid"><div><label>Date</label><input type="date" id="edate"></div><div><label>Description</label><input id="edesc" placeholder="e.g. Craft fayre fee"></div><div><label>Amount</label><input type="number" step="0.01" id="eamount"></div><div><label>Category</label><select id="ecat"><option>Materials</option><option>Stall Fee</option><option>Packaging</option><option>Equipment</option><option>Postage</option><option>Advertising</option><option>Other</option></select></div></div><button class="btn" id="addExpenseBtn">Add Expense</button></div><div class="card"><h3>Expenses</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody id="exptable"></tbody></table></div></div></section>
+<section id="settings" class="hidden"><div class="card"><h2>Prices & Costs</h2><p class="small">These figures are used for automatic profit calculations. Change them if your real costs change.</p><div class="grid"><div><label>Glitter selling price</label><input type="number" step="0.01" id="glitterPrice"></div><div><label>Floral selling price</label><input type="number" step="0.01" id="floralPrice"></div><div><label>Glitter estimated cost</label><input type="number" step="0.01" id="glitterCost"></div><div><label>Floral estimated cost</label><input type="number" step="0.01" id="floralCost"></div></div><button class="btn" id="saveSettingsBtn">Save Prices & Costs</button></div></section>
+<section id="backup" class="hidden"><div class="card"><h2>Backup & Restore</h2><p>Download a backup regularly. This is the safest way to move your records between your phone and computer.</p><button class="btn" id="downloadBtn">Download Backup</button><button class="btn secondary" id="salesCsvBtn">Export Sales to CSV</button><div style="margin-top:15px"><label>Choose backup file</label><input type="file" id="restoreFile" accept=".json,application/json"></div><button class="btn secondary" id="restoreBtn">Restore Backup</button><br><button class="btn danger" id="clearBtn">Clear All Data</button><div id="backupMsg" style="margin-top:10px"></div></div></section>
+</main>
+<script>
+(function(){
+'use strict';
+const KEY='petalInitialsAppV2';
+const letters='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const defaultData={sales:[],expenses:[],stock:Object.fromEntries(letters.map(l=>[l,{starting:0,made:0}])),materials:[{name:'UV Resin',packCost:32.99,packQty:1000,unit:'g',stock:1700,reorder:300},{name:'Keyring + Chain',packCost:30,packQty:100,unit:'each',stock:100,reorder:20},{name:'Backing Cards',packCost:34,packQty:100,unit:'each',stock:100,reorder:20},{name:'Cellophane Bags',packCost:10,packQty:100,unit:'each',stock:100,reorder:20}],settings:{glitterPrice:5,floralPrice:6,glitterCost:1.37,floralCost:1.94}};
+let data=load();
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function load(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw)return merge(JSON.parse(raw));
+  }catch(e){}
+  return clone(defaultData)
+}
+function merge(x){
+  const d=clone(defaultData);
+  if(x&&Array.isArray(x.sales))d.sales=x.sales;
+  if(x&&Array.isArray(x.expenses))d.expenses=x.expenses;
+  if(x&&x.stock)letters.forEach(l=>{if(x.stock[l])d.stock[l]={starting:Number(x.stock[l].starting)||0,made:Number(x.stock[l].made)||0}});
+  if(x&&Array.isArray(x.materials))d.materials=x.materials.map(m=>Object.assign({},m));
+  d.settings=Object.assign(d.settings,x&&x.settings||{});
+  return d
+}
+function storageAvailable(){
+  try{
+    const k='__petal_test__'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true
+  }catch(e){return false}
+}
+function persist(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(data));
+    setStatus('Saved on this device','ok');
+    return true
+  }catch(e){
+    setStatus('Browser storage is blocked — use Backup to save your data','warn');
+    return false
+  }
+}
+function setStatus(msg,type){
+  const el=document.getElementById('saveStatus');
+  if(el){el.textContent=msg;el.className='save-status '+(type||'')}
+}
+function money(n){return '£'+Number(n||0).toFixed(2)}
+function price(design){return Number(design==='Floral'?data.settings.floralPrice:data.settings.glitterPrice)}
+function cost(design){return Number(design==='Floral'?data.settings.floralCost:data.settings.glitterCost)}
+function today(){return new Date().toISOString().slice(0,10)}
+function fillLetters(id){document.getElementById(id).innerHTML=letters.map(l=>'<option value="'+l+'">'+l+'</option>').join('')}
+fillLetters('qletter');fillLetters('sletter');
+document.getElementById('sdate').value=today();document.getElementById('edate').value=today();
+document.getElementById('sprice').value=price('Glitter');
+document.getElementById('glitterPrice').value=data.settings.glitterPrice;document.getElementById('floralPrice').value=data.settings.floralPrice;document.getElementById('glitterCost').value=data.settings.glitterCost;document.getElementById('floralCost').value=data.settings.floralCost;
+document.getElementById('sdesign').addEventListener('change',function(){document.getElementById('sprice').value=price(this.value)});
+
+document.getElementById('tabs').addEventListener('click',function(e){const b=e.target.closest('button[data-page]');if(!b)return;show(b.dataset.page)});
+function show(page){['dashboard','sales','stock','materials','expenses','settings','backup'].forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==page));document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('navactive',b.dataset.page===page));render()}
+function addSale(){const design=document.getElementById('sdesign').value, letter=document.getElementById('sletter').value, p=Number(document.getElementById('sprice').value);if(!Number.isFinite(p)||p<0)return alert('Please enter a valid sale price.');data.sales.unshift({id:Date.now()+Math.random(),date:document.getElementById('sdate').value||today(),letter,design,payment:document.getElementById('payment').value,price:p,cost:cost(design),notes:document.getElementById('snotes').value.trim()});document.getElementById('snotes').value='';persist();render()}
+function quickSale(){const design=document.getElementById('qdesign').value,letter=document.getElementById('qletter').value;data.sales.unshift({id:Date.now()+Math.random(),date:today(),letter,design,payment:document.getElementById('qpayment').value,price:price(design),cost:cost(design),notes:'Quick sale'});persist();render()}
+function delSale(id){if(confirm('Delete this sale?')){data.sales=data.sales.filter(x=>x.id!==id);persist();render()}}
+function addExpense(){const amount=Number(document.getElementById('eamount').value),desc=document.getElementById('edesc').value.trim();if(!desc||!Number.isFinite(amount)||amount<=0)return alert('Please enter a description and a positive amount.');data.expenses.unshift({id:Date.now()+Math.random(),date:document.getElementById('edate').value||today(),desc,cat:document.getElementById('ecat').value,amount});document.getElementById('eamount').value='';document.getElementById('edesc').value='';persist();render()}
+function delExpense(id){if(confirm('Delete this expense?')){data.expenses=data.expenses.filter(x=>x.id!==id);persist();render()}}
+function stockSold(letter){return data.sales.filter(x=>x.letter===letter).length}
+function render(){
+const rev=data.sales.reduce((a,x)=>a+Number(x.price||0),0), pp=data.sales.reduce((a,x)=>a+Number(x.price||0)-Number(x.cost||0),0), exp=data.expenses.reduce((a,x)=>a+Number(x.amount||0),0);
+document.getElementById('revenue').textContent=money(rev);document.getElementById('units').textContent=data.sales.length;document.getElementById('productProfit').textContent=money(pp);document.getElementById('expenseTotal').textContent=money(exp);document.getElementById('netProfit').textContent=money(pp-exp);
+document.getElementById('salestable').innerHTML=data.sales.length?data.sales.map(x=>'<tr><td>'+esc(x.date)+'</td><td>'+esc(x.letter)+'</td><td>'+esc(x.design)+'</td><td>'+esc(x.payment)+'</td><td>'+money(x.price)+'</td><td>'+money(x.cost)+'</td><td>'+money(Number(x.price)-Number(x.cost))+'</td><td><button class="delete" data-del-sale="'+x.id+'">×</button></td></tr>').join(''):'<tr><td colspan="8" class="empty">No sales yet.</td></tr>';
+document.getElementById('stocktable').innerHTML=letters.map(l=>{const s=data.stock[l]||{starting:0,made:0},sold=stockSold(l),cur=Number(s.starting)+Number(s.made)-sold;return '<tr class="'+(cur<=2?'stocklow':'')+'"><td><b>'+l+'</b></td><td><input type="number" min="0" data-stock-start="'+l+'" value="'+Number(s.starting)+'"></td><td><input type="number" min="0" data-stock-made="'+l+'" value="'+Number(s.made)+'"></td><td>'+sold+'</td><td><b>'+cur+'</b></td><td>'+(cur<=2?'LOW':'OK')+'</td></tr>'}).join('');
+document.getElementById('low').innerHTML=letters.map(l=>{const s=data.stock[l],cur=Number(s.starting)+Number(s.made)-stockSold(l);return cur<=2?'<span class="pill">'+l+': '+cur+'</span>':''}).join('')||'<span class="success">No letters are at or below the low-stock level.</span>';
+document.getElementById('exptable').innerHTML=data.expenses.length?data.expenses.map(x=>'<tr><td>'+esc(x.date)+'</td><td>'+esc(x.desc)+'</td><td>'+esc(x.cat)+'</td><td>'+money(x.amount)+'</td><td><button class="delete" data-del-exp="'+x.id+'">×</button></td></tr>').join(''):'<tr><td colspan="5" class="empty">No expenses yet.</td></tr>';
+document.getElementById('mattable').innerHTML=data.materials.map((m,i)=>'<tr><td>'+esc(m.name)+'</td><td><input type="number" step="0.01" data-mat="'+i+'" data-field="packCost" value="'+Number(m.packCost)+'"></td><td><input type="number" step="0.01" data-mat="'+i+'" data-field="packQty" value="'+Number(m.packQty)+'"></td><td>'+esc(m.unit)+'</td><td>'+money(Number(m.packCost)/Math.max(Number(m.packQty),1))+'</td><td><input type="number" step="0.01" data-mat="'+i+'" data-field="stock" value="'+Number(m.stock)+'"></td><td>'+Number(m.reorder)+'</td></tr>').join('');
+}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+document.getElementById('addSaleBtn').onclick=addSale;document.getElementById('quickSaleBtn').onclick=quickSale;document.getElementById('addExpenseBtn').onclick=addExpense;
+document.getElementById('salestable').addEventListener('click',e=>{const b=e.target.closest('[data-del-sale]');if(b)delSale(Number(b.dataset.delSale))});
+document.getElementById('exptable').addEventListener('click',e=>{const b=e.target.closest('[data-del-exp]');if(b)delExpense(Number(b.dataset.delExp))});
+document.getElementById('stocktable').addEventListener('change',e=>{const a=e.target.dataset.stockStart,m=e.target.dataset.stockMade;if(a)data.stock[a].starting=Math.max(0,Number(e.target.value)||0);if(m)data.stock[m].made=Math.max(0,Number(e.target.value)||0);persist();render()});
+document.getElementById('saveMaterialsBtn').onclick=function(){document.querySelectorAll('[data-mat]').forEach(el=>{const i=Number(el.dataset.mat),f=el.dataset.field;data.materials[i][f]=Math.max(0,Number(el.value)||0)});persist();render();alert('Materials saved.')};
+document.getElementById('saveSettingsBtn').onclick=function(){data.settings.glitterPrice=Number(document.getElementById('glitterPrice').value)||0;data.settings.floralPrice=Number(document.getElementById('floralPrice').value)||0;data.settings.glitterCost=Number(document.getElementById('glitterCost').value)||0;data.settings.floralCost=Number(document.getElementById('floralCost').value)||0;document.getElementById('sprice').value=price(document.getElementById('sdesign').value);persist();render();alert('Prices and costs saved.')};
+document.getElementById('downloadBtn').onclick=function(){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Petal_Initials_Backup_'+today()+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+document.getElementById('salesCsvBtn').onclick=function(){
+  const rows=[['Date','Letter','Design','Payment','Price','Cost','Profit','Notes'],
+    ...data.sales.map(x=>[x.date,x.letter,x.design,x.payment,Number(x.price||0).toFixed(2),Number(x.cost||0).toFixed(2),(Number(x.price||0)-Number(x.cost||0)).toFixed(2),x.notes||''])];
+  const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='Petal_Initials_Sales_'+today()+'.csv';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
+document.getElementById('restoreBtn').onclick=function(){const f=document.getElementById('restoreFile').files[0];if(!f)return alert('Choose a backup file first.');const r=new FileReader();r.onload=function(){try{data=merge(JSON.parse(r.result));persist();render();alert('Backup restored successfully.')}catch(e){alert('That file is not a valid Petal Initials backup.')}};r.readAsText(f)};
+document.getElementById('clearBtn').onclick=function(){if(confirm('This will delete ALL sales, expenses and stock changes on this device. Continue?')){data=clone(defaultData);persist();render();alert('Data cleared.')}};
+if(storageAvailable())setStatus('Ready — your data will save on this device','ok');else setStatus('Storage blocked — use Backup after changes','warn'); render();show('dashboard');
+})();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+
+</body></html>
